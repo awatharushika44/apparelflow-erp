@@ -1,0 +1,41 @@
+/* THE ONLY PLACE COLOURS ARE DEFINED.
+   Naming rule: --pair-NAME-fg and --pair-NAME-bg are always used together.
+   tests/contrast.test.js reads this file and fails if any pair is under 4.5:1.
+   --ring-NAME-on-... pairs are focus rings and need 3:1. */
+:root {
+  color-scheme: light;
+
+  /* page and text */
+  --pair-page-fg: #1b2f45;      --pair-page-bg: #fbf7ef;
+  --pair-muted-fg: #4a5a6a;     --pair-muted-bg: #fbf7ef;
+  --pair-card-fg: #1b2f45;      --pair-card-bg: #ffffff;
+
+  /* inputs, selects, options (all light, all dark text) */
+  --pair-input-fg: #1b2f45;         --pair-input-bg: #ffffff;
+  --pair-placeholder-fg: #5b6b7b;
+   --pair-placeholder-bg: #ffffff;
+  --pair-select-fg: #1b2f45;        --pair-select-bg: #ffffff;
+  --pair-option-fg: #1b2f45;        --pair-option-bg: #ffffff;
+  --pair-disabled-fg: #55616c;      --pair-disabled-bg: #eee9df;
+  --pair-autofill-fg: #1b2f45;      --pair-autofill-bg: #fff8d6;
+
+  /* buttons and links */
+  --pair-primary-fg: #ffffff;       --pair-primary-bg: #1f4e79;
+  --pair-accent-fg: #1b2f45;        --pair-accent-bg: #f28c28;
+  --pair-link-fg: #0b4f94;          --pair-link-bg: #fbf7ef;
+  --pair-button-disabled-fg: #55616c; --pair-button-disabled-bg: #eee9df;
+
+  /* messages */
+  --pair-error-fg: #a11212;         --pair-error-bg: #fbf7ef;
+  --pair-warn-fg: #7a3d00;          --pair-warn-bg: #fff1d6;
+
+  /* traffic lights (also always shown with shape + word + number) */
+  --pair-green-fg: #14532d;         --pair-green-bg: #e3f4e6;
+  --pair-yellow-fg: #5c4500;        --pair-yellow-bg: #fff3c4;
+  --pair-red-fg: #8a1111;           --pair-red-bg: #fde3e1;
+  --pair-uncounted-fg: #3a4652;     --pair-uncounted-bg: #eef1f4;
+
+  /* focus rings, 3:1 minimum against the surface they sit on */
+  --ring-page-fg: #0b5cad;          --ring-page-bg: #fbf7ef;
+  --ring-card-fg: #0b5cad;          --ring-card-bg: #ffffff;
+}
