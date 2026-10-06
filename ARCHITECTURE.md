@@ -1,9 +1,9 @@
-# ApparelFlow ERP: Architecture (v2.1)
+# ApparelFlow ERP: Architecture (v2.2)
 
 > Cutting Operations & Gatekeeper Verification Terminal.
 > **Core idea:** a cutting batch can never reach sewing unless a different person, the Verifier, has counted every component and the **server** agrees nothing is short (PDF §3, §7.4, §9).
 
-**Status:** v2.1, owner decisions O1 to O4 applied (5 Oct 2026). Nothing is built yet.
+**Status:** v2.2 (6 Oct 2026). The database layer, login and guard, order creation and submit, and the pure domain functions are built and tested (see section 15). Approve, reject, sewing and all screens are not built yet. Everything below marked **[planned]** is still a plan.
 **PDF citations** use the assessment's section numbers: §3 problem and hard-stop boundary, §5 personas, §6 state machine and audit, §7.x functional spec, §8 schema, §9 security, §10 tests, §11 UI and non-functional, §12 AI report, §13 schedule, §14 submission, §15 rubric, §16 evaluator audit.
 Items marked **[proposed]** are mine and need your yes or no. Everything else is yours or was confirmed earlier.
 
@@ -34,7 +34,7 @@ Items marked **[proposed]** are mine and need your yes or no. Everything else is
 | Database | PostgreSQL on Neon | Triggers, CHECKs, row locks, transactions (§8, §9) |
 | DB access | Raw SQL with `pg` behind a tiny adapter | Every query is explainable; adapter lets tests use PGlite |
 | Validation | Zod, same schemas on client and server | Rejects negatives, decimals, strings, empties (§11) |
-| Auth | bcrypt + JWT in an httpOnly cookie | Not readable by page JavaScript; simple on one domain |
+| Auth | bcryptjs (pure JavaScript, no native build) + JWT in an httpOnly cookie | Not readable by page JavaScript; simple on one domain |
 | Tests | Vitest; PGlite for `npm test`; Neon branch for race and privilege tests | Zero-secret fresh-clone run (§10, §14) |
 | Hosting | Vercel (one deployment), Neon (DB) | Public URL (§14) |
 | Language | JavaScript | Fewer new things in 4 days |
@@ -58,7 +58,7 @@ flowchart LR
     H --> G["guard wrapper built from the permissions map: auth 401, role 403, origin check"]
     G --> V["Zod validation 422"]
     V --> S["services: transactions and business rules"]
-    S --> D["domain: pure functions (multiplier, trafficLight, wastage, stateMachine)"]
+    S --> D["domain: pure functions (multiplier, trafficLight, wastage)"]
     S --> DB[("PostgreSQL on Neon: FKs, CHECKs, ENUMs, triggers, least-privilege role")]
 ```
 
@@ -81,37 +81,44 @@ flowchart LR
 
 ---
 
-## 3. Folder structure (planned)
+## 3. Folder structure (as built, 6 Oct 2026)
 
 ```
-apparelflow/
+apparelflow-erp/
   app/
-    (pages)/ login, supervisor, verifier, sewing        UI only
+    layout.js page.js globals.css                  template page; real screens [planned]
     api/
-      health/route.js
-      auth/{login,logout,me}/route.js
-      recipes/route.js
-      orders/route.js                  orders/[id]/route.js
-      orders/[id]/{submit,resubmit}/route.js
-      verification/orders/route.js     verification/orders/[id]/route.js
-      verification/orders/[id]/{counts,approve,reject}/route.js
-      sewing/{queue,active}/route.js   sewing/orders/[id]/route.js
-      sewing/orders/[id]/start/route.js
+      health/route.js                              built
+      auth/{login,logout,me}/route.js              built
+      recipes/route.js                             built
+      orders/route.js                              built (GET list, POST create)
+      orders/[id]/submit/route.js                  built
+      verification/orders/route.js                 step 13 (written, run it to confirm)
+      verification/orders/[id]/route.js            step 13
+      verification/orders/[id]/counts/route.js     step 13
+      verification/orders/[id]/{approve,reject}/   [planned] the gate
+      orders/[id]/resubmit  sewing/*               [planned]
   lib/
     permissions.js          THE single map (D17)
     guard.js                withGuard(routeKey, handler)
-    db.js                   adapter: pg Pool in prod, PGlite in tests
-    validation/schemas.js
-    domain/                 multiplier.js trafficLight.js wastage.js stateMachine.js
-    services/               createOrder submitOrder resubmitOrder saveCounts
-                            approveOrder rejectOrder startSewing
-  db/migrations/            001_schema.sql 002_triggers.sql 003_roles.sql
-  db/seed.js
-  tests/                    unit/, integration/ (PGlite), neon/ (race + privileges)
-  scripts/                  docs-permissions.js  attack.sh
-  docs/adr/                 one short file per decision
-  ARCHITECTURE.md  README.md  AI_LOG.md  AI_OPTIMIZATION_REPORT.md
+    http.js                 HttpError, json, parseBody (400 bad JSON, 422 bad fields)
+    auth/session.js         sign, read cookie, load user from the database
+    db.js                   lazy pg Pool in production, useTestAdapter() hook for PGlite
+    validation/schemas.js   Zod schemas
+    domain/                 multiplier.js trafficLight.js wastage.js
+    services/               createOrder submitOrder (built); saveCounts verificationDetail (step 13)
+                            approveOrder rejectOrder resubmitOrder startSewing [planned]
+  db/
+    migrations/             001_schema.sql 002_triggers.sql 003_roles.sql 004_hard_stop.sql
+    migrate.mjs  seed.mjs  demo-data.mjs
+  tests/                    flat folder, run by `npm test` on PGlite, zero secrets
+    helpers/                db.js fixtures.js api.js
+  scripts/                  schema-attacks, trigger-attacks, hard-stop-attacks, seed-check,
+                            pglite-check, neon-grants-check (extra evidence, run with node)
+  ARCHITECTURE.md  README.md [planned]  AI_LOG.md  AI_OPTIMIZATION_REPORT.md [planned]
 ```
+
+The spike routes and the `spike_lock` table were deleted after the stack decision (the spike login used a hard-coded password and the real JWT secret, so it had to go before real auth shipped).
 
 ---
 
@@ -192,7 +199,7 @@ stateDiagram-v2
 
 PDF §6 names CUTTING IN-PROGRESS, PENDING VERIFICATION, REJECTED, VERIFIED, and the Sewing Queue. `SEWING_STARTED` is our addition (ADR 2) so the queue can stay literally `status = 'VERIFIED'` (§9).
 
-Only these five transitions exist. Anything else returns **409** and changes nothing. The legal set is stored twice **[proposed, D23]**: in `domain/stateMachine.js` (checked in the service) and in an `allowed_transitions` table checked by a database trigger, so even a buggy service cannot make an illegal move. Roles stay an application concern.
+Only these five transitions exist. Anything else returns **409** and changes nothing. The legal set lives in the `allowed_transitions` table, checked by a database trigger (built, D23), and each service also checks the source state itself and returns 409 (built for submit). There is no `domain/stateMachine.js` file: the table is the single source of truth, so the two cannot drift apart. Roles stay an application concern.
 
 ---
 
@@ -349,12 +356,12 @@ erDiagram
 | Expected pieces = target_qty x pieces_per_garment | `domain/multiplier.js` | §7.2 |
 | GREEN equal, YELLOW more, RED fewer, uncounted blocked | `domain/trafficLight.js`, shared by client preview and server | §7.3 |
 | Wastage % | `domain/wastage.js` | §7.5 |
-| Legal transitions | `domain/stateMachine.js` and `allowed_transitions` | §6 |
+| Legal transitions | `allowed_transitions` table + trigger, and the source-state check in each service | §6 |
 | Approve preconditions | `services/approveOrder.js` | §7.4, §9 |
 
 ### Why not floating point
 
-In JavaScript `1.1 * 40` is `44.00000000000001`, which can flip a result sitting exactly on a cap. So `wastage.js` works in **integer hundredths of a yard**:
+JavaScript floats cannot store most decimals exactly: `0.1 + 0.2` is `0.30000000000000004` and `1.1 * 3` is `3.3000000000000003`. A result like that can flip a comparison sitting exactly on a cap. (An earlier version of this document used `1.1 * 40` as the example. That was wrong: in Node it equals exactly `44`. A test caught it, see AI_LOG.md.) So `wastage.js` works in **integer hundredths of a yard**:
 
 ```
 std_h      = std_fabric_yards x 100              (1.8 yd -> 180)
@@ -438,7 +445,7 @@ If any item fails, that test moves to the Neon lane and the gap is documented. `
 ### Harness
 
 - `lib/db.js` exposes `query(sql, params)` and `withTx(fn)`. In production it uses a `pg` Pool (small max, one checked-out client per transaction); in tests it uses PGlite. Same SQL files in both.
-- Tests call route handlers directly: build a `Request`, pass it in, read the `Response`. A `loginAs(role)` helper returns the session cookie. This replaces Supertest.
+- Tests call route handlers directly: build a `Request`, pass it in, read the `Response`. A `cookieFor(email)` helper in `tests/helpers/api.js` returns the session cookie. This replaces Supertest. All test files sit directly in `tests/` and share the helpers in `tests/helpers/`.
 - Each test file starts from a fresh schema plus seed.
 
 ### Test list
@@ -489,11 +496,13 @@ If any item fails, that test moves to the Neon lane and the gap is documented. `
 
 The keep-alive ping is best effort: free tiers can sleep or limit hours, so the README states the cold-start behaviour. Document the decision either way.
 
+**Result (5 Oct 2026):** items 1 to 4 passed on the live Vercel URL (JSON route, Neon query, httpOnly cookie login, row-lock transaction on one pooled connection). **Next.js was kept (ADR 18).** Item 5 (PGlite) passed in `scripts/pglite-check.mjs`, 8 of 8 checks. The spike routes are deleted.
+
 ---
 
 ## 12. Schedule (D20)
 
-Today is Monday 5 Oct 2026. Hours are estimates against the 28 to 32 hour target (§13).
+Written on Monday 5 Oct 2026, updated 6 Oct. Hours are estimates against the 28 to 32 hour target (§13). Day 1 ran past its plan (about 12 hours used by the morning of 6 Oct), so the screens are the main schedule risk. Cut line, in order: stand-out extras, component SVG images, Neon-lane tests beyond one race test, responsive polish. Never cut: the server rules, tests T1 to T5, contrast tokens, the README with 3 credentials, the AI report, a working public deploy.
 
 | Day | Scope | Est. hours |
 |---|---|---|
@@ -546,6 +555,12 @@ Every build step ends with:
 | D23 | DB transition guard (`allowed_transitions` trigger) and "VERIFIED requires APPROVED log" rule. **Should-tier with a time-box:** if roles + triggers + grants exceed about 1.5h on Day 1, fall back to the row trigger + TRUNCATE trigger only, drop the role/grant layer and the D23 extras, and write an ADR | Confirmed (Should) | §6, §9 |
 | D24 | Conventions: `tokens.css` with explicit contrast colours for every input state built on Day 1, axe run as each screen is built; guard reads the cookie from the `Request` header; `await params`; `export const runtime = 'nodejs'` on routes that use `pg`; small `pg` pool (max 3) | Confirmed | §11, §10 |
 
+| D25 | `bcryptjs` instead of `bcrypt` (no native build to break on Vercel) | Built | §5 |
+| D26 | Tests live flat in `tests/` with helpers in `tests/helpers/`; attack scripts stay in `scripts/` as extra evidence | Built | §10 |
+| D27 | No `stateMachine.js`: the `allowed_transitions` table plus each service's source-state check is the state machine | Built | §6 |
+| D28 | Hard stop also lives in the database: `004_hard_stop.sql` refuses VERIFIED unless every component row exists, expected = recipe x target, and nothing is RED or uncounted | Built, tested | §3, §9 |
+| D29 | The app connects as `apparelflow_app` (SELECT, limited INSERT/UPDATE, INSERT-only on logs). Vercel holds only `DATABASE_URL` and `JWT_SECRET` | Built | §6, §14 |
+
 ### Resolved items (5 Oct 2026)
 
 | # | Question | Resolution |
@@ -554,3 +569,45 @@ Every build step ends with:
 | O2 | `rejection_note` vs `audit_note` | Keep `rejection_note` exactly per PDF §8 (required on REJECTED); add a separate optional `audit_note` for approvals |
 | O3 | D21, D22, D23 | D21 and D22 accepted; D23 accepted as Should-tier with a 1.5h time-box and ADR fallback |
 | O4 | Deadline | Assume 8 Oct; target submission on the evening of 7 Oct |
+
+---
+
+## 15. Build status and evidence (6 Oct 2026)
+
+Only things with pasted output count as Done.
+
+| Area | Status | Evidence |
+|---|---|---|
+| Schema, triggers, roles, hard-stop trigger (migrations 001 to 004) | Done | `schema-attacks` 22 PASS, `trigger-attacks` 41 PASS, `hard-stop-attacks` 11 PASS, `neon-grants-check` 6 PASS, and `tests/db-hard-stop.test.js` |
+| Seed: 2 PDF recipes, 3 users, 8 orders in every state | Done | `seed-check` 20 PASS |
+| Login, logout, me, health, guard, permissions map | Done | `tests/auth.test.js` (11), `tests/permissions-coverage.test.js` (4), live curl checks on Vercel |
+| Multiplier engine | Done | `tests/multiplier.test.js` (5) |
+| Traffic light and exact wastage maths | Done | `tests/trafficLight.test.js` (6), `tests/wastage.test.js` (9) including 5.00 vs 5.01 |
+| Create order, recipes, submit to QC, order list | Done | `tests/orders.test.js` (6), `tests/submit.test.js` (6) |
+| Verifier list, detail, save counts | Step 13 written, not yet confirmed | run `npm test` and expect 62 tests |
+| Approve (422 hard stop, 403, 409, audit log), reject, resubmit | Not built | next |
+| Sewing queue, detail, start | Not built | |
+| Screens, contrast tokens, role switcher | Not built | |
+| README, AI_OPTIMIZATION_REPORT.md, final audit | Not built | |
+
+Last confirmed run: `npm test` 8 files, 53 tests passing (before step 13).
+
+### README column mapping (PDF section 8)
+
+| PDF wording | Our column | Note |
+|---|---|---|
+| timestamp of the decision | `verification_logs.decided_at` | set by the database clock, never by the request |
+| rejection note | `verification_logs.rejection_note` | required when decision is REJECTED |
+| (not in the PDF) | `verification_logs.audit_note` | optional note on approval, shown to sewing |
+| (not in the PDF) | `allowed_transitions` table | the five legal moves |
+| (not in the PDF) | `cutting_orders.sewing_started_by`, `sewing_started_at` | who started sewing and when |
+| actual fabric yards | `cutting_orders.actual_fabric_yds` | `NUMERIC(10,2)` in the database, whole numbers only in the API and forms (D6) |
+
+### Known limitations (put these in the README too)
+
+- **JWTs are stateless.** There is no revocation before expiry (8 hours). A copied token works until it expires. Our guard reloads the user from the database on every request, so a demotion takes effect immediately, but a deleted cookie jar is the only logout for a copied token.
+- **The database does not reject decimal yards.** `actual_fabric_yds` is `NUMERIC(10,2)`. Whole-number yards are enforced by Zod on the server and by the form, not by the column.
+- **`guard_order_update` cannot tell an old REJECTED log from a new one** after a second rejection of the same order. Optional fix after the core: require the log row to come from the same transaction.
+- **The owner connection can still bypass every trigger.** See section 9.
+- **Cold starts.** Neon and Vercel free tiers can sleep, so the first request after a pause may be slow.
+
