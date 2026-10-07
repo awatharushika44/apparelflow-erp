@@ -11,7 +11,8 @@
     "db:seed": "node --env-file=.env.local db/seed.mjs",
     "test": "vitest run",
     "test:e2e": "playwright test --config=e2e/playwright.config.js",
-    "audit:db": "node --env-file=.env.local scripts/db-audit.mjs"
+    "audit:db": "node --env-file=.env.local scripts/db-audit.mjs",
+    "audit:live": "node scripts/live-attack.mjs"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
