@@ -1,58 +1,459 @@
-/* ===== LANDING PAGE TOKENS ("Cut. Count. Verify. Sew.") =====
-   PASTE THIS BLOCK AT THE VERY END OF app/tokens.css (after the closing brace).
-   Names are all new (prefix "leaf"), so no existing screen changes colour.
-   Pairs are tested by tests/contrast.test.js automatically (4.5:1, rings 3:1).
-   Palette: paper #F4FAF0, sage #E6F2DB, mint #CFF1DC, mint-deep #8FDDB4, chartreuse #C8F031,
-   chartreuse-deep #A5CC0B, ink #0E2418, ink-soft #3F5A4B, moss #1F6B43, line #CFE3C9. */
+/* ===== GREEN APPARELFLOW THEME =====
+   Landing + signed-in screens.
+   All colour values live here so screen CSS can use tokens only.
+   Contrast is verified by tests/contrast.test.js.
+*/
+
 :root {
-  /* text on the three light surfaces */
-  --pair-leaf-page-fg: #0E2418;       --pair-leaf-page-bg: #F4FAF0;
-  --pair-leaf-soft-fg: #3F5A4B;       --pair-leaf-soft-bg: #F4FAF0;
-  --pair-leaf-sage-fg: #0E2418;       --pair-leaf-sage-bg: #E6F2DB;
-  --pair-leaf-softsage-fg: #3F5A4B;   --pair-leaf-softsage-bg: #E6F2DB;
-  --pair-leaf-mint-fg: #0E2418;       --pair-leaf-mint-bg: #CFF1DC;
-  --pair-leaf-white-fg: #0E2418;      --pair-leaf-white-bg: #FFFFFF;
-  --pair-leaf-softwhite-fg: #3F5A4B;  --pair-leaf-softwhite-bg: #FFFFFF;
-  --pair-leaf-moss-fg: #1F6B43;       --pair-leaf-moss-bg: #F4FAF0;
-  --pair-leaf-mosswhite-fg: #1F6B43;  --pair-leaf-mosswhite-bg: #FFFFFF;
+  color-scheme: light;
 
-  /* chartreuse is a FILL only: ink text on top, never white, never as a text colour */
-  --pair-leaf-chart-fg: #0E2418;      --pair-leaf-chart-bg: #C8F031;
-  --pair-leaf-chartdeep-fg: #0E2418;  --pair-leaf-chartdeep-bg: #A5CC0B;
+  /* =========================================================
+     LANDING PAGE PAIRS
+     ========================================================= */
 
-  /* inputs: explicit dark text on white, in every state */
-  --pair-leaf-input-fg: #0E2418;      --pair-leaf-input-bg: #FFFFFF;
-  --pair-leaf-placeholder-fg: #5C7566; --pair-leaf-placeholder-bg: #FFFFFF;
-  --pair-leaf-autofill-fg: #0E2418;   --pair-leaf-autofill-bg: #F3FAD2;
+  --pair-leaf-page-fg: #0E2418;
+  --pair-leaf-page-bg: #F4FAF0;
 
-  /* messages */
-  --pair-leaf-error-fg: #B3261E;      --pair-leaf-error-bg: #FFFFFF;
-  --pair-leaf-alert-fg: #B3261E;      --pair-leaf-alert-bg: #FDECEA;
+  --pair-leaf-soft-fg: #3F5A4B;
+  --pair-leaf-soft-bg: #F4FAF0;
 
-  /* status tokens for the later screens (shape + word + colour, never colour alone) */
-  --pair-leaf-match-fg: #FFFFFF;      --pair-leaf-match-bg: #137A3E;
-  --pair-leaf-excess-fg: #0E2418;     --pair-leaf-excess-bg: #FFD23F;
-  --pair-leaf-short-fg: #FFFFFF;      --pair-leaf-short-bg: #B3261E;
+  --pair-leaf-sage-fg: #0E2418;
+  --pair-leaf-sage-bg: #E6F2DB;
 
-  /* focus rings and input borders (3:1). The brief's #7FA48D measured 2.76:1, so it is darker here */
-  --ring-leaf-fg: #0E2418;            --ring-leaf-bg: #F4FAF0;
-  --ring-leafwhite-fg: #0E2418;       --ring-leafwhite-bg: #FFFFFF;
-  --ring-leafedge-fg: #5F8A6E;        --ring-leafedge-bg: #FFFFFF;
-  --ring-leafedgepaper-fg: #5F8A6E;   --ring-leafedgepaper-bg: #F4FAF0;
+  --pair-leaf-softsage-fg: #3F5A4B;
+  --pair-leaf-softsage-bg: #E6F2DB;
 
-  /* decoration only (lines, fills, crop marks). Never used as a text colour */
+  --pair-leaf-mint-fg: #0E2418;
+  --pair-leaf-mint-bg: #CFF1DC;
+
+  --pair-leaf-white-fg: #0E2418;
+  --pair-leaf-white-bg: #FFFFFF;
+
+  --pair-leaf-softwhite-fg: #3F5A4B;
+  --pair-leaf-softwhite-bg: #FFFFFF;
+
+  --pair-leaf-moss-fg: #1F6B43;
+  --pair-leaf-moss-bg: #F4FAF0;
+
+  --pair-leaf-mosswhite-fg: #1F6B43;
+  --pair-leaf-mosswhite-bg: #FFFFFF;
+
+  --pair-leaf-chart-fg: #0E2418;
+  --pair-leaf-chart-bg: #C8F031;
+
+  --pair-leaf-chartdeep-fg: #0E2418;
+  --pair-leaf-chartdeep-bg: #A5CC0B;
+
+  --pair-leaf-input-fg: #0E2418;
+  --pair-leaf-input-bg: #FFFFFF;
+
+  --pair-leaf-placeholder-fg: #5C7566;
+  --pair-leaf-placeholder-bg: #FFFFFF;
+
+  --pair-leaf-autofill-fg: #0E2418;
+  --pair-leaf-autofill-bg: #F3FAD2;
+
+  --pair-leaf-error-fg: #B3261E;
+  --pair-leaf-error-bg: #FFFFFF;
+
+  --pair-leaf-alert-fg: #B3261E;
+  --pair-leaf-alert-bg: #FDECEA;
+
+  --pair-leaf-match-fg: #FFFFFF;
+  --pair-leaf-match-bg: #137A3E;
+
+  --pair-leaf-excess-fg: #0E2418;
+  --pair-leaf-excess-bg: #FFD23F;
+
+  --pair-leaf-short-fg: #FFFFFF;
+  --pair-leaf-short-bg: #B3261E;
+
+
+  /* =========================================================
+     LANDING PAGE FOCUS RINGS
+     ========================================================= */
+
+  --ring-leaf-fg: #0E2418;
+  --ring-leaf-bg: #F4FAF0;
+
+  --ring-leafwhite-fg: #0E2418;
+  --ring-leafwhite-bg: #FFFFFF;
+
+  --ring-leafedge-fg: #5F8A6E;
+  --ring-leafedge-bg: #FFFFFF;
+
+  --ring-leafedgepaper-fg: #5F8A6E;
+  --ring-leafedgepaper-bg: #F4FAF0;
+
+
+  /* =========================================================
+     LANDING PAGE DECORATION
+     ========================================================= */
+
   --deco-leaf-mintdeep: #8FDDB4;
   --deco-leaf-chart: #C8F031;
   --deco-leaf-chartdeep: #A5CC0B;
   --deco-leaf-moss: #1F6B43;
   --deco-leaf-line: #CFE3C9;
 
-  /* very faint fabric weave for the page background (alpha stays under 0.08) */
-  --grad-leafweave: repeating-linear-gradient(0deg, rgba(31, 107, 67, 0.045) 0 1px, transparent 1px 6px),
-                    repeating-linear-gradient(90deg, rgba(31, 107, 67, 0.045) 0 1px, transparent 1px 6px);
 
-  --shadow-leaf-card: 0 1px 0 rgba(14, 36, 24, 0.05), 0 10px 24px -12px rgba(14, 36, 24, 0.25);
-  --shadow-leaf-lift: 0 2px 0 rgba(14, 36, 24, 0.06), 0 18px 32px -14px rgba(14, 36, 24, 0.35);
-  --shadow-leaf-key: 0 3px 0 #0E2418;
-  --glow-leaf: 0 0 0 6px rgba(200, 240, 49, 0.55);
+  /* =========================================================
+     LANDING PAGE EFFECTS
+     ========================================================= */
+
+  --grad-leafweave:
+    repeating-linear-gradient(
+      0deg,
+      rgba(31, 107, 67, 0.045) 0 1px,
+      transparent 1px 6px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(31, 107, 67, 0.045) 0 1px,
+      transparent 1px 6px
+    );
+
+  --shadow-leaf-card:
+    0 1px 0 rgba(14, 36, 24, 0.05),
+    0 10px 24px -12px rgba(14, 36, 24, 0.25);
+
+  --shadow-leaf-lift:
+    0 2px 0 rgba(14, 36, 24, 0.06),
+    0 18px 32px -14px rgba(14, 36, 24, 0.35);
+
+  --shadow-leaf-key:
+    0 3px 0 #0E2418;
+
+  --glow-leaf:
+    0 0 0 6px rgba(200, 240, 49, 0.55);
+
+
+  /* =========================================================
+     SIGNED-IN PAGE PAIRS
+     ========================================================= */
+
+  --pair-page-fg: #0E2418;
+  --pair-page-bg: #F4FAF0;
+
+  --pair-muted-fg: #3F5A4B;
+  --pair-muted-bg: #F4FAF0;
+
+  --pair-card-fg: #0E2418;
+  --pair-card-bg: #FFFFFF;
+
+  --pair-input-fg: #0E2418;
+  --pair-input-bg: #FFFFFF;
+
+  --pair-placeholder-fg: #5C7566;
+  --pair-placeholder-bg: #FFFFFF;
+
+  --pair-select-fg: #0E2418;
+  --pair-select-bg: #FFFFFF;
+
+  --pair-option-fg: #0E2418;
+  --pair-option-bg: #FFFFFF;
+
+  --pair-disabled-fg: #4B5F53;
+  --pair-disabled-bg: #E3ECDC;
+
+  --pair-autofill-fg: #0E2418;
+  --pair-autofill-bg: #F3FBC4;
+
+  --pair-primary-fg: #FFFFFF;
+  --pair-primary-bg: #1F6B43;
+
+  --pair-secondary-fg: #1F6B43;
+  --pair-secondary-bg: #FFFFFF;
+
+  --pair-accent-fg: #0E2418;
+  --pair-accent-bg: #C8F031;
+
+  --pair-link-fg: #1F6B43;
+  --pair-link-bg: #F4FAF0;
+
+  --pair-button-disabled-fg: #4B5F53;
+  --pair-button-disabled-bg: #E3ECDC;
+
+  --pair-error-fg: #B3261E;
+  --pair-error-bg: #F4FAF0;
+
+  --pair-alert-fg: #8A1A14;
+  --pair-alert-bg: #FBE9E7;
+
+  --pair-note-fg: #0E2418;
+  --pair-note-bg: #E6F2DB;
+
+  --pair-tab-fg: #0E2418;
+  --pair-tab-bg: #D9EAD0;
+
+  --pair-tabon-fg: #FFFFFF;
+  --pair-tabon-bg: #0E2418;
+
+  --pair-ink-fg: #F4FAF0;
+  --pair-ink-bg: #0E2418;
+
+  /* Test expects this exact token name */
+  --pair-inkmuted-fg: #BCD6C5;
+  --pair-inkmuted-bg: #0E2418;
+
+  /* Existing CSS may use this spelling */
+  --pair-ink-muted-fg: #BCD6C5;
+  --pair-ink-muted-bg: #0E2418;
+
+  --pair-inkgrad-fg: #F4FAF0;
+  --pair-inkgrad-bg: #1A3D2A;
+
+  --pair-inkgradmuted-fg: #BCD6C5;
+  --pair-inkgradmuted-bg: #1A3D2A;
+
+
+  /* =========================================================
+     VERIFIER / SEWING STATUS PAIRS
+     ========================================================= */
+
+  --pair-danger-fg: #8A1A14;
+  --pair-danger-bg: #FBE9E7;
+
+  --pair-green-fg: #FFFFFF;
+  --pair-green-bg: #137A3E;
+
+  --pair-red-fg: #FFFFFF;
+  --pair-red-bg: #B3261E;
+
+  --pair-step-fg: #0E2418;
+  --pair-step-bg: #E6F2DB;
+
+  --pair-uncounted-fg: #3F5A4B;
+  --pair-uncounted-bg: #F4FAF0;
+
+  --pair-warn-fg: #0E2418;
+  --pair-warn-bg: #FFD23F;
+
+  --pair-yellow-fg: #0E2418;
+  --pair-yellow-bg: #FFD23F;
+
+
+  /* =========================================================
+     SIGNED-IN FOCUS RINGS
+     ========================================================= */
+
+  --ring-page-fg: #0E2418;
+  --ring-page-bg: #F4FAF0;
+
+  --ring-card-fg: #0E2418;
+  --ring-card-bg: #FFFFFF;
+
+  --ring-ink-fg: #C8F031;
+  --ring-ink-bg: #0E2418;
+
+
+  /* =========================================================
+     SIGNED-IN DECORATION
+     ========================================================= */
+
+  --deco-hazard-a: #C8F031;
+  --deco-thread: #A5CC0B;
+  --deco-paper: #F4FAF0;
+  --deco-steel: #1F6B43;
+  --deco-ok: #5FD08A;
+  --deco-line: #CFE3C9;
+  --deco-slot: #CFE3C9;
+  --deco-edge-primary: #0E2418;
+  --deco-edge-secondary: #B4D7BF;
+  --deco-edge-accent: #7E9A07;
+  --deco-edge-danger: #B3261E;
+
+
+  /* =========================================================
+     SIGNED-IN GRADIENTS
+     ========================================================= */
+
+  --grad-weave:
+    repeating-linear-gradient(
+      0deg,
+      rgba(31, 107, 67, 0.045) 0 1px,
+      transparent 1px 6px
+    ),
+    repeating-linear-gradient(
+      90deg,
+      rgba(31, 107, 67, 0.045) 0 1px,
+      transparent 1px 6px
+    );
+
+  --grad-grain:
+    repeating-linear-gradient(
+      0deg,
+      rgba(14, 36, 24, 0.018) 0 1px,
+      transparent 1px 3px
+    );
+
+  --grad-paper:
+    radial-gradient(
+      circle at 15% 0%,
+      rgba(200, 240, 49, 0.07),
+      transparent 38%
+    ),
+    radial-gradient(
+      circle at 95% 5%,
+      rgba(31, 107, 67, 0.06),
+      transparent 34%
+    );
+
+  --grad-ink:
+    linear-gradient(
+      160deg,
+      #1A3D2A 0%,
+      #0E2418 70%
+    );
+
+  --grad-hazard:
+    repeating-linear-gradient(
+      -45deg,
+      #C8F031 0 10px,
+      #0E2418 10px 20px
+    );
+
+
+  /* =========================================================
+     SIGNED-IN SHADOWS
+     ========================================================= */
+
+  --shadow-card:
+    0 1px 0 rgba(14, 36, 24, 0.05),
+    0 2px 6px rgba(14, 36, 24, 0.06),
+    0 14px 28px -12px rgba(31, 107, 67, 0.3);
+
+  --shadow-lift:
+    0 2px 0 rgba(14, 36, 24, 0.05),
+    0 8px 16px rgba(14, 36, 24, 0.1),
+    0 28px 40px -16px rgba(31, 107, 67, 0.4);
+
+  --shadow-key:
+    0 10px 14px -8px rgba(14, 36, 24, 0.5);
+
+  --shadow-inset:
+    inset 0 1px 3px rgba(14, 36, 24, 0.12);
+
+  --glow-focus:
+    0 0 0 4px rgba(200, 240, 49, 0.55);
+
+
+  /* =========================================================
+     LANDING SHELL PAIRS
+     ========================================================= */
+
+  --pair-land-ink-fg: #0E2418;
+  --pair-land-ink-bg: #F4FAF0;
+
+  --pair-land-soft-fg: #3F5A4B;
+  --pair-land-soft-bg: #F4FAF0;
+
+  --pair-land-moss-fg: #1F6B43;
+  --pair-land-moss-bg: #F4FAF0;
+
+  --pair-land-chart-fg: #0E2418;
+  --pair-land-chart-bg: #C8F031;
+
+  --pair-land-chartdeep-fg: #0E2418;
+  --pair-land-chartdeep-bg: #A5CC0B;
+
+  --pair-land-mint-fg: #0E2418;
+  --pair-land-mint-bg: #CFF1DC;
+
+  --pair-land-sage-fg: #0E2418;
+  --pair-land-sage-bg: #E6F2DB;
+
+  --pair-land-dark-fg: #F4FAF0;
+  --pair-land-dark-bg: #0E2418;
+
+  --pair-land-field-fg: #0E2418;
+  --pair-land-field-bg: #FFFFFF;
+
+  --pair-land-hint-fg: #5C7566;
+  --pair-land-hint-bg: #FFFFFF;
+
+  --pair-land-error-fg: #B3261E;
+  --pair-land-error-bg: #F4FAF0;
+
+  --pair-land-alert-fg: #8A1A14;
+  --pair-land-alert-bg: #FBE9E7;
+
+
+  /* =========================================================
+     LANDING SHELL RINGS
+     ========================================================= */
+
+  --ring-land-paper-fg: #0E2418;
+  --ring-land-paper-bg: #F4FAF0;
+
+  --ring-land-field-fg: #5E8570;
+  --ring-land-field-bg: #FFFFFF;
+
+
+  /* =========================================================
+     LANDING SHELL DECORATION
+     ========================================================= */
+
+  --deco-land-ink: #0E2418;
+  --deco-land-paper: #F4FAF0;
+  --deco-land-sage: #E6F2DB;
+  --deco-land-mint: #CFF1DC;
+  --deco-land-mintdeep: #8FDDB4;
+  --deco-land-chart: #C8F031;
+  --deco-land-chartdeep: #A5CC0B;
+  --deco-land-line: #CFE3C9;
+  --deco-land-stitch: #5E8570;
+  --deco-land-curve: #B4D7BF;
+  --deco-land-scrim: rgba(14, 36, 24, 0.62);
+
+
+  /* =========================================================
+     LANDING SHELL GRADIENTS
+     ========================================================= */
+
+  --grad-land-weave:
+    repeating-linear-gradient(
+      45deg,
+      rgba(31, 107, 67, 0.06) 0 1px,
+      transparent 1px 7px
+    ),
+    repeating-linear-gradient(
+      -45deg,
+      rgba(31, 107, 67, 0.06) 0 1px,
+      transparent 1px 7px
+    );
+
+  --grad-land-glow:
+    radial-gradient(
+      circle at 92% 6%,
+      rgba(200, 240, 49, 0.55),
+      transparent 42%
+    );
+
+  --grad-land-bands:
+    linear-gradient(
+      115deg,
+      #F4FAF0 0 18%,
+      #E6F2DB 18% 34%,
+      #CFF1DC 34% 52%,
+      #F4FAF0 52% 62%,
+      #EEF9C4 62% 80%,
+      #E6F2DB 80% 100%
+    );
+
+
+  /* =========================================================
+     LANDING SHELL SHADOWS
+     ========================================================= */
+
+  --shadow-land-tile:
+    0 1px 0 rgba(14, 36, 24, 0.06),
+    0 10px 24px -10px rgba(31, 107, 67, 0.35);
+
+  --shadow-land-lift:
+    0 2px 0 rgba(14, 36, 24, 0.06),
+    0 18px 32px -12px rgba(31, 107, 67, 0.45);
+
+  --glow-land-focus:
+    0 0 0 6px rgba(200, 240, 49, 0.55);
 }

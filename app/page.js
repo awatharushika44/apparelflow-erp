@@ -2,13 +2,12 @@
 
 import { useEffect, useState } from 'react';
 import './auth.css';
-import './landing.css';
 
 import SupervisorScreen from './components/SupervisorScreen';
 import VerifierScreen from './components/VerifierScreen';
 import SewingScreen from './components/SewingScreen';
+import AppShell from './components/shell/AppShell';
 import Landing from './components/landing/Landing';
-import { RoleIcon } from './components/Gate';
 import { DEMO_ACCOUNTS } from './components/demo';
 
 const LABELS = Object.fromEntries(
@@ -108,89 +107,28 @@ export default function Home() {
 
   if (user) {
     return (
-      <>
-        <header className="bar">
-          <div
-            className="hazard"
-            aria-hidden="true"
-          />
+      <AppShell
+        user={user}
+        roleLabel={
+          LABELS[user.role] ?? user.role
+        }
+        onLogout={logout}
+      >
+        {user.role ===
+          'cutting_supervisor' && (
+          <SupervisorScreen />
+        )}
 
-          <div className="container bar-inner">
-            <span className="brand">
-              ApparelFlow
-            </span>
+        {user.role ===
+          'cutting_verifier' && (
+          <VerifierScreen />
+        )}
 
-            <span className="chip-role">
-              <RoleIcon
-                role={user.role}
-                size={16}
-              />
-
-              {LABELS[user.role] ??
-                user.role}
-            </span>
-
-            <span className="spacer" />
-
-            <span className="who-name">
-              {user.fullName ||
-                user.email}
-            </span>
-
-            <button
-              className="btn btn-ink"
-              onClick={logout}
-            >
-              Sign out
-            </button>
-          </div>
-        </header>
-
-        <main
-          id="main"
-          className="container"
-        >
-          <p
-            role="status"
-            className="sr-only"
-          >
-            Signed in as{' '}
-            {user.fullName ||
-              user.email}
-            , role{' '}
-            {LABELS[user.role] ??
-              user.role}.
-          </p>
-
-          <div className="page-head">
-            <p className="eyebrow">
-              {LABELS[user.role] ??
-                user.role}
-            </p>
-
-            <h1>
-              Welcome,{' '}
-              {user.fullName ||
-                user.email}
-            </h1>
-          </div>
-
-          {user.role ===
-            'cutting_supervisor' && (
-            <SupervisorScreen />
-          )}
-
-          {user.role ===
-            'cutting_verifier' && (
-            <VerifierScreen />
-          )}
-
-          {user.role ===
-            'sewing_supervisor' && (
-            <SewingScreen />
-          )}
-        </main>
-      </>
+        {user.role ===
+          'sewing_supervisor' && (
+          <SewingScreen />
+        )}
+      </AppShell>
     );
   }
 

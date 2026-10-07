@@ -1,16 +1,16 @@
-/* =========================================================
+ /* =========================================================
    APPARELFLOW LANDING — GREEN CUTTING GATE
    ========================================================= */
 
 .ld-page {
-  --ld-ink: #0e2418;
-  --ld-paper: #f4faf0;
-  --ld-soft: #e6f2db;
-  --ld-mint: #cff1dc;
-  --ld-chart: #c8f031;
-  --ld-moss: #1f6b43;
-  --ld-line: #cfe3c9;
-  --ld-muted: #5c7566;
+  --ld-ink: var(--pair-land-ink-fg);
+  --ld-paper: var(--pair-land-ink-bg);
+  --ld-soft: var(--pair-land-sage-bg);
+  --ld-mint: var(--pair-land-mint-bg);
+  --ld-chart: var(--pair-land-chart-bg);
+  --ld-moss: var(--pair-land-moss-fg);
+  --ld-line: var(--deco-land-line);
+  --ld-muted: var(--pair-land-soft-fg);
 
   position: relative;
   min-height: 100vh;
@@ -48,17 +48,7 @@
 }
 
 .ld-scene-1 {
-  background:
-    repeating-linear-gradient(
-      45deg,
-      rgba(31, 107, 67, 0.055) 0 1px,
-      transparent 1px 8px
-    ),
-    repeating-linear-gradient(
-      -45deg,
-      rgba(31, 107, 67, 0.055) 0 1px,
-      transparent 1px 8px
-    );
+  background: var(--grad-land-weave);
 }
 
 .ld-scene-1::after {
@@ -69,7 +59,8 @@
   right: -180px;
   top: -190px;
   border-radius: 50%;
-  background: rgba(200, 240, 49, 0.34);
+  background: var(--deco-land-chart);
+  opacity: 0.34;
   filter: blur(4px);
 }
 
@@ -84,34 +75,25 @@
 
 .ld-curve {
   fill: none;
-  stroke: rgba(31, 107, 67, 0.22);
+  stroke: var(--deco-land-mintdeep);
   stroke-width: 3;
 }
 
 .ld-stitchline {
   fill: none;
-  stroke: rgba(31, 107, 67, 0.42);
+  stroke: var(--deco-land-mintdeep);
   stroke-width: 2;
   stroke-dasharray: 4 9;
 }
 
 .ld-crop {
   fill: none;
-  stroke: rgba(14, 36, 24, 0.18);
+  stroke: var(--deco-land-ink);
   stroke-width: 2;
 }
 
 .ld-scene-3 {
-  background:
-    linear-gradient(
-      115deg,
-      #f4faf0 0 18%,
-      #e6f2db 18% 34%,
-      #cff1dc 34% 52%,
-      #f4faf0 52% 62%,
-      #eef9c4 62% 80%,
-      #e6f2db 80% 100%
-    );
+  background: var(--grad-land-bands);
 }
 
 .ld-scene-3::before,
@@ -120,7 +102,7 @@
   position: absolute;
   width: 180px;
   height: 180px;
-  border: 2px dashed rgba(31, 107, 67, 0.28);
+  border: 2px dashed var(--deco-land-line);
   transform: rotate(18deg);
 }
 
@@ -287,7 +269,7 @@
 .ld-auth-tabs button:focus-visible,
 .ld-show-password:focus-visible,
 .ld-footer button:focus-visible {
-  outline: 3px solid var(--ld-chart);
+  outline: 3px solid var(--ld-ink);
   outline-offset: 3px;
 }
 
@@ -371,13 +353,11 @@
   padding: 22px;
   border: 1px solid var(--ld-line);
   border-radius: 24px;
-  background: rgba(244, 250, 240, 0.92);
+  background: var(--pair-land-field-bg);
   color: var(--ld-ink);
   text-align: left;
   cursor: pointer;
-  box-shadow:
-    0 1px 0 rgba(14, 36, 24, 0.06),
-    0 16px 34px -18px rgba(31, 107, 67, 0.4);
+  box-shadow: var(--shadow-land-lift);
   transition:
     transform 180ms ease,
     border-color 180ms ease,
@@ -387,9 +367,7 @@
 .ld-role-tile:hover {
   transform: translateY(-6px);
   border-color: var(--ld-moss);
-  box-shadow:
-    0 2px 0 rgba(14, 36, 24, 0.08),
-    0 24px 40px -18px rgba(31, 107, 67, 0.48);
+  box-shadow: var(--shadow-land-lift);
 }
 
 .ld-role-top {
@@ -555,13 +533,11 @@
   border-radius: 26px;
   background: var(--ld-paper);
   color: var(--ld-ink);
-  box-shadow:
-    0 30px 80px rgba(14, 36, 24, 0.35);
+  box-shadow: var(--shadow-land-lift);
 }
 
 .ld-dialog::backdrop {
-  background: rgba(14, 36, 24, 0.62);
-  backdrop-filter: blur(4px);
+  background: var(--deco-land-scrim);
 }
 
 .ld-dialog-shell {
@@ -626,7 +602,7 @@
 .ld-auth-tabs button.is-active {
   background: var(--ld-paper);
   color: var(--ld-ink);
-  box-shadow: 0 1px 4px rgba(14, 36, 24, 0.12);
+  box-shadow: var(--shadow-inset);
 }
 
 .ld-signup-note,
@@ -670,13 +646,13 @@
   padding: 0 14px;
   border: 1px solid var(--ld-line);
   border-radius: 12px;
-  background: #fff;
+  background: var(--pair-land-field-bg);
   color: var(--ld-ink);
   font: inherit;
 }
 
 .ld-field input:focus {
-  outline: 3px solid var(--ld-chart);
+  outline: 3px solid var(--ld-ink);
   outline-offset: 1px;
 }
 
@@ -703,13 +679,13 @@
 
 .ld-field-error {
   margin: 6px 0 0;
-  color: #8a1a14;
+  color: var(--pair-land-error-fg);
   font-size: 0.78rem;
   font-weight: 700;
 }
 
 .ld-form-error {
-  color: #8a1a14;
+  color: var(--pair-land-error-fg);
 }
 
 .ld-submit {
