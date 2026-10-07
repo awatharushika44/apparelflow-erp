@@ -2,34 +2,19 @@
 
 import { useEffect, useState } from 'react';
 import './auth.css';
+import SupervisorScreen from './components/SupervisorScreen';
+import { GateIllustration, RoleIcon } from './components/Gate';
 
-// Demo accounts from db/demo-data.mjs. Public by design (the PDF requires them in the README).
+// Public demo accounts from db/demo-data.mjs (the PDF requires them in the README).
 const DEMO_ACCOUNTS = [
-  {
-    role: 'Cutting Supervisor',
-    blurb: 'Creates cutting orders',
-    email: 'supervisor@apparelflow.demo',
-    password: 'Cutting@2026',
-  },
-  {
-    role: 'Cutting Verifier',
-    blurb: 'Counts pieces, approves or rejects',
-    email: 'verifier@apparelflow.demo',
-    password: 'Verify@2026',
-  },
-  {
-    role: 'Sewing Supervisor',
-    blurb: 'Starts assembly on verified batches',
-    email: 'sewing@apparelflow.demo',
-    password: 'Sewing@2026',
-  },
+  { role: 'cutting_supervisor', label: 'Cutting Supervisor', blurb: 'Creates cutting orders and sends them to QC.', email: 'supervisor@apparelflow.demo', password: 'Cutting@2026' },
+  { role: 'cutting_verifier', label: 'Cutting Verifier', blurb: 'Counts every piece, then approves or rejects.', email: 'verifier@apparelflow.demo', password: 'Verify@2026' },
+  { role: 'sewing_supervisor', label: 'Sewing Supervisor', blurb: 'Sees verified batches only and starts assembly.', email: 'sewing@apparelflow.demo', password: 'Sewing@2026' },
 ];
+const LABELS = Object.fromEntries(DEMO_ACCOUNTS.map((a) => [a.role, a.label]));
 
 async function api(path, options = {}) {
-  const res = await fetch(path, {
-    ...options,
-    headers: { 'Content-Type': 'application/json' },
-  });
+  const res = await fetch(path, { ...options, headers: { 'Content-Type': 'application/json' } });
   let data = null;
   try {
     data = await res.json();
@@ -58,13 +43,11 @@ export default function Home() {
     loadMe();
   }, []);
 
+  // One path for the badges AND the form: both call the real login API.
   async function login(creds) {
     setBusy(true);
     setErrors({});
-    const res = await api('/api/auth/login', {
-      method: 'POST',
-      body: JSON.stringify(creds),
-    });
+    const res = await api('/api/auth/login', { method: 'POST', body: JSON.stringify(creds) });
     setBusy(false);
     if (!res.ok) {
       setErrors({ form: res.data?.error?.message || 'Sign-in failed.' });
@@ -79,9 +62,7 @@ export default function Home() {
     if (!email.trim()) next.email = 'Email is required.';
     if (!password) next.password = 'Password is required.';
     setErrors(next);
-    if (Object.keys(next).length === 0) {
-      login({ email: email.trim(), password });
-    }
+    if (Object.keys(next).length === 0) login({ email: email.trim(), password });
   }
 
   async function logout() {
@@ -93,89 +74,131 @@ export default function Home() {
 
   if (checking) {
     return (
-      <main className="shell">
-        <p>Checking your session...</p>
+      <main id="main" className="container">
+        <p className="page-head">Checking your session...</p>
       </main>
     );
   }
 
   if (user) {
     return (
-      <main className="shell">
-        <h1>ApparelFlow ERP</h1>
-        <div className="who" role="status">
-          Signed in as <strong>{user.fullName || user.full_name || user.email}</strong>, role{' '}
-          <strong>{user.role}</strong>.
-        </div>
-        <button className="btn" onClick={logout}>
-          Sign out
-        </button>
-      </main>
+      <>
+        <header className="bar">
+          <div className="hazard" aria-hidden="true" />
+          <div className="container bar-inner">
+            <span className="brand">ApparelFlow</span>
+            <span className="chip-role">
+              <RoleIcon role={user.role} size={16} />
+              {LABELS[user.role] ?? user.role}
+            </span>
+            <span className="spacer" />
+            <span className="who-name">{user.fullName || user.email}</span>
+            <button className="btn btn-ink" onClick={logout}>Sign out</button>
+          </div>
+        </header>
+
+        <main id="main" className="container">
+          <p role="status" className="sr-only">
+            Signed in as {user.fullName || user.email}, role {LABELS[user.role] ?? user.role}.
+          </p>
+          <div className="page-head">
+            <p className="eyebrow">{LABELS[user.role] ?? user.role}</p>
+            <h1>Welcome, {user.fullName || user.email}</h1>
+          </div>
+
+          {/* The UI only shows what the role may use. The server enforces it anyway. */}
+          {user.role === 'cutting_supervisor' && <SupervisorScreen />}
+          {user.role !== 'cutting_supervisor' && (
+            <p className="lead">This role's screen is built in a later step.</p>
+          )}
+        </main>
+      </>
     );
   }
 
   return (
-    <main className="shell">
-      <h1>ApparelFlow ERP: Cutting Gatekeeper</h1>
-      <p className="lead">Pick a role to sign in with one click, or use the form below.</p>
+    <>
+      <div className="hazard" aria-hidden="true" />
+      <main id="main" className="container">
+        <section className="hero" aria-labelledby="hero-title">
+          <div className="hero-copy">
+            <p className="eyebrow rise" style={{ '--i': 0 }}>ApparelFlow ERP · Cutting Gatekeeper</p>
+            <h1 id="hero-title" className="hero-title rise" style={{ '--i': 1 }}>
+              Nothing reaches sewing until it is <em>counted and signed.</em>
+            </h1>
+            <p className="lead rise" style={{ '--i': 2 }}>
+              A second person counts every piece, and the server refuses any batch that is short.
+            </p>
+          </div>
+          <div className="hero-panel rise" style={{ '--i': 2 }}>
+            <div className="gate-stage"><GateIllustration open={busy} /></div>
+            <p className="gate-caption" aria-live="polite">
+              {busy ? 'Gate open. Signing you in...' : 'Gate closed. Sign in to open it.'}
+            </p>
+          </div>
+        </section>
 
-      <section aria-label="Role Switcher" className="badges">
-        {DEMO_ACCOUNTS.map((a) => (
-          <button
-            key={a.role}
-            className="badge"
-            disabled={busy}
-            onClick={() => login({ email: a.email, password: a.password })}
-          >
-            <strong>{a.role}</strong>
-            <span>{a.blurb}</span>
-          </button>
-        ))}
-      </section>
+        <section className="page-head" aria-labelledby="badges-title">
+          <p className="eyebrow">Role Switcher</p>
+          <h2 id="badges-title">Pick a badge to sign in</h2>
+          <p className="lead">One click uses the real login. Each badge opens a different set of doors.</p>
+        </section>
 
-      <form className="card" onSubmit={onSubmit} noValidate>
-        <h2>Sign in</h2>
+        <ul className="badges plain">
+          {DEMO_ACCOUNTS.map((a, i) => (
+            <li key={a.role} className="badge rise" style={{ '--i': i + 3 }}>
+              <span className="badge-plate" aria-hidden="true">
+                <span className="badge-slot" />
+                <span className="badge-stripe" />
+              </span>
+              <div className="badge-body">
+                <span className="badge-icon"><RoleIcon role={a.role} size={30} /></span>
+                <h3>{a.label}</h3>
+                <p className="hint">{a.email}</p>
+                <p>{a.blurb}</p>
+                <button
+                  className="btn btn-primary"
+                  disabled={busy}
+                  onClick={() => login({ email: a.email, password: a.password })}
+                >
+                  Sign in as {a.label}
+                </button>
+              </div>
+            </li>
+          ))}
+        </ul>
 
-        <div className="field">
-          <label htmlFor="email">Email</label>
-          <input
-            id="email"
-            type="email"
-            autoComplete="username"
-            value={email}
-            onChange={(e) => setEmail(e.target.value)}
-            aria-invalid={Boolean(errors.email)}
-            aria-describedby="email-err"
-          />
-          <span id="email-err" className="err">
-            {errors.email}
-          </span>
-        </div>
+        <section className="page-head" aria-labelledby="signin-title">
+          <h2 id="signin-title">Or type your credentials</h2>
+        </section>
+        <form className="card form-card" onSubmit={onSubmit} noValidate>
+          <div className="field">
+            <div className="field-box">
+              <label htmlFor="email">Email</label>
+              <input id="email" className="control" type="email" autoComplete="username"
+                placeholder="you@apparelflow.demo" value={email}
+                onChange={(e) => setEmail(e.target.value)}
+                aria-invalid={Boolean(errors.email)} aria-describedby="email-err" />
+            </div>
+            <p id="email-err" className="field-error" aria-live="polite">{errors.email}</p>
+          </div>
 
-        <div className="field">
-          <label htmlFor="password">Password</label>
-          <input
-            id="password"
-            type="password"
-            autoComplete="current-password"
-            value={password}
-            onChange={(e) => setPassword(e.target.value)}
-            aria-invalid={Boolean(errors.password)}
-            aria-describedby="pw-err"
-          />
-          <span id="pw-err" className="err">
-            {errors.password}
-          </span>
-        </div>
+          <div className="field">
+            <div className="field-box">
+              <label htmlFor="password">Password</label>
+              <input id="password" className="control" type="password" autoComplete="current-password"
+                placeholder="Your password" value={password}
+                onChange={(e) => setPassword(e.target.value)}
+                aria-invalid={Boolean(errors.password)} aria-describedby="password-err" />
+            </div>
+            <p id="password-err" className="field-error" aria-live="polite">{errors.password}</p>
+          </div>
 
-        <p className="err" role="alert">
-          {errors.form}
-        </p>
+          {errors.form && <p className="alert" role="alert">{errors.form}</p>}
 
-        <button className="btn" type="submit" disabled={busy}>
-          Sign in
-        </button>
-      </form>
-    </main>
+          <button className="btn btn-primary" type="submit" disabled={busy}>Sign in</button>
+        </form>
+      </main>
+    </>
   );
 }

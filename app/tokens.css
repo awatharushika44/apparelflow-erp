@@ -1,19 +1,18 @@
-/* THE ONLY PLACE COLOURS ARE DEFINED.
-   Naming rule: --pair-NAME-fg and --pair-NAME-bg are always used together.
-   tests/contrast.test.js reads this file and fails if any pair is under 4.5:1.
-   --ring-NAME-on-... pairs are focus rings and need 3:1. */
+/* THE ONLY PLACE COLOURS ARE DEFINED (pairs, gradients, shadows, decoration).
+   --pair-NAME-fg / --pair-NAME-bg are used together and must be 4.5:1.
+   --ring-NAME-fg / --ring-NAME-bg are focus rings and must be 3:1.
+   --deco-* are decoration only and are never used as text. */
 :root {
   color-scheme: light;
 
   /* page and text */
-  --pair-page-fg: #1b2f45;      --pair-page-bg: #fbf7ef;
-  --pair-muted-fg: #4a5a6a;     --pair-muted-bg: #fbf7ef;
-  --pair-card-fg: #1b2f45;      --pair-card-bg: #ffffff;
+  --pair-page-fg: #1b2f45;          --pair-page-bg: #fbf7ef;
+  --pair-muted-fg: #4a5a6a;         --pair-muted-bg: #fbf7ef;
+  --pair-card-fg: #1b2f45;          --pair-card-bg: #ffffff;
 
-  /* inputs, selects, options (all light, all dark text) */
+  /* inputs, selects, options */
   --pair-input-fg: #1b2f45;         --pair-input-bg: #ffffff;
-  --pair-placeholder-fg: #5b6b7b;
-   --pair-placeholder-bg: #ffffff;
+  --pair-placeholder-fg: #5b6b7b;   --pair-placeholder-bg: #ffffff;
   --pair-select-fg: #1b2f45;        --pair-select-bg: #ffffff;
   --pair-option-fg: #1b2f45;        --pair-option-bg: #ffffff;
   --pair-disabled-fg: #55616c;      --pair-disabled-bg: #eee9df;
@@ -21,21 +20,64 @@
 
   /* buttons and links */
   --pair-primary-fg: #ffffff;       --pair-primary-bg: #1f4e79;
+  --pair-secondary-fg: #1f4e79;     --pair-secondary-bg: #ffffff;
+  --pair-danger-fg: #ffffff;        --pair-danger-bg: #a11212;
   --pair-accent-fg: #1b2f45;        --pair-accent-bg: #f28c28;
   --pair-link-fg: #0b4f94;          --pair-link-bg: #fbf7ef;
   --pair-button-disabled-fg: #55616c; --pair-button-disabled-bg: #eee9df;
 
   /* messages */
   --pair-error-fg: #a11212;         --pair-error-bg: #fbf7ef;
+  --pair-alert-fg: #8a1111;         --pair-alert-bg: #fde3e1;
   --pair-warn-fg: #7a3d00;          --pair-warn-bg: #fff1d6;
+  --pair-note-fg: #1b2f45;          --pair-note-bg: #eaf1f8;
 
-  /* traffic lights (also always shown with shape + word + number) */
+  /* traffic lights (always shown with shape + word + number) */
   --pair-green-fg: #14532d;         --pair-green-bg: #e3f4e6;
   --pair-yellow-fg: #5c4500;        --pair-yellow-bg: #fff3c4;
   --pair-red-fg: #8a1111;           --pair-red-bg: #fde3e1;
   --pair-uncounted-fg: #3a4652;     --pair-uncounted-bg: #eef1f4;
 
-  /* focus rings, 3:1 minimum against the surface they sit on */
+  /* pipeline steps */
+  --pair-step-fg: #1b2f45;          --pair-step-bg: #e9e2d3;
+
+  /* ink: top bar, hero panel, readout. Gradient pairs test the LIGHTEST stop. */
+  --pair-ink-fg: #fbf7ef;           --pair-ink-bg: #12263a;
+  --pair-inkmuted-fg: #c4d3e2;      --pair-inkmuted-bg: #12263a;
+  --pair-inkgrad-fg: #fbf7ef;       --pair-inkgrad-bg: #1d3b57;
+  --pair-inkgradmuted-fg: #c4d3e2;  --pair-inkgradmuted-bg: #1d3b57;
+
+  /* focus rings (3:1 against the surface they sit on) */
   --ring-page-fg: #0b5cad;          --ring-page-bg: #fbf7ef;
   --ring-card-fg: #0b5cad;          --ring-card-bg: #ffffff;
+  --ring-ink-fg: #ffd08a;           --ring-ink-bg: #12263a;
+
+  /* decoration only: lines, stripes, edges, SVG fills. Never text. */
+  --deco-hazard-a: #f28c28;
+  --deco-thread: #f28c28;
+  --deco-paper: #fbf7ef;
+  --deco-steel: #1f4e79;
+  --deco-ok: #5fd08a;
+  --deco-line: #d9d1bf;
+  --deco-slot: #cfc6b2;
+  --deco-edge-primary: #12304d;
+  --deco-edge-secondary: #b9b09b;
+  --deco-edge-accent: #b5640f;
+  --deco-edge-danger: #5e0b0b;
+
+  /* gradients (grain and wash are almost transparent) */
+  --grad-grain: repeating-linear-gradient(0deg, rgba(27, 47, 69, 0.018) 0 1px, transparent 1px 3px);
+  --grad-paper: radial-gradient(circle at 15% 0%, rgba(242, 140, 40, 0.07), transparent 38%),
+                radial-gradient(circle at 95% 5%, rgba(31, 78, 121, 0.06), transparent 34%);
+  --grad-ink: linear-gradient(160deg, #1d3b57 0%, #12263a 70%);
+  --grad-hazard: repeating-linear-gradient(-45deg, #f28c28 0 10px, #12263a 10px 20px);
+  --grad-weave: repeating-linear-gradient(45deg, rgba(251, 247, 239, 0.07) 0 2px, transparent 2px 9px),
+                repeating-linear-gradient(-45deg, rgba(251, 247, 239, 0.07) 0 2px, transparent 2px 9px);
+
+  /* shadows */
+  --shadow-card: 0 1px 0 rgba(18, 38, 58, 0.05), 0 2px 6px rgba(18, 38, 58, 0.06), 0 14px 28px -12px rgba(18, 38, 58, 0.22);
+  --shadow-lift: 0 2px 0 rgba(18, 38, 58, 0.05), 0 8px 16px rgba(18, 38, 58, 0.1), 0 28px 40px -16px rgba(18, 38, 58, 0.32);
+  --shadow-key: 0 10px 14px -8px rgba(18, 38, 58, 0.5);
+  --shadow-inset: inset 0 2px 4px rgba(18, 38, 58, 0.18);
+  --glow-focus: 0 0 0 4px rgba(11, 92, 173, 0.22);
 }
