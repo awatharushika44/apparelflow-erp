@@ -1,83 +1,58 @@
-/* THE ONLY PLACE COLOURS ARE DEFINED (pairs, gradients, shadows, decoration).
-   --pair-NAME-fg / --pair-NAME-bg are used together and must be 4.5:1.
-   --ring-NAME-fg / --ring-NAME-bg are focus rings and must be 3:1.
-   --deco-* are decoration only and are never used as text. */
+/* ===== LANDING PAGE TOKENS ("Cut. Count. Verify. Sew.") =====
+   PASTE THIS BLOCK AT THE VERY END OF app/tokens.css (after the closing brace).
+   Names are all new (prefix "leaf"), so no existing screen changes colour.
+   Pairs are tested by tests/contrast.test.js automatically (4.5:1, rings 3:1).
+   Palette: paper #F4FAF0, sage #E6F2DB, mint #CFF1DC, mint-deep #8FDDB4, chartreuse #C8F031,
+   chartreuse-deep #A5CC0B, ink #0E2418, ink-soft #3F5A4B, moss #1F6B43, line #CFE3C9. */
 :root {
-  color-scheme: light;
+  /* text on the three light surfaces */
+  --pair-leaf-page-fg: #0E2418;       --pair-leaf-page-bg: #F4FAF0;
+  --pair-leaf-soft-fg: #3F5A4B;       --pair-leaf-soft-bg: #F4FAF0;
+  --pair-leaf-sage-fg: #0E2418;       --pair-leaf-sage-bg: #E6F2DB;
+  --pair-leaf-softsage-fg: #3F5A4B;   --pair-leaf-softsage-bg: #E6F2DB;
+  --pair-leaf-mint-fg: #0E2418;       --pair-leaf-mint-bg: #CFF1DC;
+  --pair-leaf-white-fg: #0E2418;      --pair-leaf-white-bg: #FFFFFF;
+  --pair-leaf-softwhite-fg: #3F5A4B;  --pair-leaf-softwhite-bg: #FFFFFF;
+  --pair-leaf-moss-fg: #1F6B43;       --pair-leaf-moss-bg: #F4FAF0;
+  --pair-leaf-mosswhite-fg: #1F6B43;  --pair-leaf-mosswhite-bg: #FFFFFF;
 
-  /* page and text */
-  --pair-page-fg: #1b2f45;          --pair-page-bg: #fbf7ef;
-  --pair-muted-fg: #4a5a6a;         --pair-muted-bg: #fbf7ef;
-  --pair-card-fg: #1b2f45;          --pair-card-bg: #ffffff;
+  /* chartreuse is a FILL only: ink text on top, never white, never as a text colour */
+  --pair-leaf-chart-fg: #0E2418;      --pair-leaf-chart-bg: #C8F031;
+  --pair-leaf-chartdeep-fg: #0E2418;  --pair-leaf-chartdeep-bg: #A5CC0B;
 
-  /* inputs, selects, options */
-  --pair-input-fg: #1b2f45;         --pair-input-bg: #ffffff;
-  --pair-placeholder-fg: #5b6b7b;   --pair-placeholder-bg: #ffffff;
-  --pair-select-fg: #1b2f45;        --pair-select-bg: #ffffff;
-  --pair-option-fg: #1b2f45;        --pair-option-bg: #ffffff;
-  --pair-disabled-fg: #55616c;      --pair-disabled-bg: #eee9df;
-  --pair-autofill-fg: #1b2f45;      --pair-autofill-bg: #fff8d6;
-
-  /* buttons and links */
-  --pair-primary-fg: #ffffff;       --pair-primary-bg: #1f4e79;
-  --pair-secondary-fg: #1f4e79;     --pair-secondary-bg: #ffffff;
-  --pair-danger-fg: #ffffff;        --pair-danger-bg: #a11212;
-  --pair-accent-fg: #1b2f45;        --pair-accent-bg: #f28c28;
-  --pair-link-fg: #0b4f94;          --pair-link-bg: #fbf7ef;
-  --pair-button-disabled-fg: #55616c; --pair-button-disabled-bg: #eee9df;
+  /* inputs: explicit dark text on white, in every state */
+  --pair-leaf-input-fg: #0E2418;      --pair-leaf-input-bg: #FFFFFF;
+  --pair-leaf-placeholder-fg: #5C7566; --pair-leaf-placeholder-bg: #FFFFFF;
+  --pair-leaf-autofill-fg: #0E2418;   --pair-leaf-autofill-bg: #F3FAD2;
 
   /* messages */
-  --pair-error-fg: #a11212;         --pair-error-bg: #fbf7ef;
-  --pair-alert-fg: #8a1111;         --pair-alert-bg: #fde3e1;
-  --pair-warn-fg: #7a3d00;          --pair-warn-bg: #fff1d6;
-  --pair-note-fg: #1b2f45;          --pair-note-bg: #eaf1f8;
+  --pair-leaf-error-fg: #B3261E;      --pair-leaf-error-bg: #FFFFFF;
+  --pair-leaf-alert-fg: #B3261E;      --pair-leaf-alert-bg: #FDECEA;
 
-  /* traffic lights (always shown with shape + word + number) */
-  --pair-green-fg: #14532d;         --pair-green-bg: #e3f4e6;
-  --pair-yellow-fg: #5c4500;        --pair-yellow-bg: #fff3c4;
-  --pair-red-fg: #8a1111;           --pair-red-bg: #fde3e1;
-  --pair-uncounted-fg: #3a4652;     --pair-uncounted-bg: #eef1f4;
+  /* status tokens for the later screens (shape + word + colour, never colour alone) */
+  --pair-leaf-match-fg: #FFFFFF;      --pair-leaf-match-bg: #137A3E;
+  --pair-leaf-excess-fg: #0E2418;     --pair-leaf-excess-bg: #FFD23F;
+  --pair-leaf-short-fg: #FFFFFF;      --pair-leaf-short-bg: #B3261E;
 
-  /* pipeline steps */
-  --pair-step-fg: #1b2f45;          --pair-step-bg: #e9e2d3;
+  /* focus rings and input borders (3:1). The brief's #7FA48D measured 2.76:1, so it is darker here */
+  --ring-leaf-fg: #0E2418;            --ring-leaf-bg: #F4FAF0;
+  --ring-leafwhite-fg: #0E2418;       --ring-leafwhite-bg: #FFFFFF;
+  --ring-leafedge-fg: #5F8A6E;        --ring-leafedge-bg: #FFFFFF;
+  --ring-leafedgepaper-fg: #5F8A6E;   --ring-leafedgepaper-bg: #F4FAF0;
 
-  /* ink: top bar, hero panel, readout. Gradient pairs test the LIGHTEST stop. */
-  --pair-ink-fg: #fbf7ef;           --pair-ink-bg: #12263a;
-  --pair-inkmuted-fg: #c4d3e2;      --pair-inkmuted-bg: #12263a;
-  --pair-inkgrad-fg: #fbf7ef;       --pair-inkgrad-bg: #1d3b57;
-  --pair-inkgradmuted-fg: #c4d3e2;  --pair-inkgradmuted-bg: #1d3b57;
+  /* decoration only (lines, fills, crop marks). Never used as a text colour */
+  --deco-leaf-mintdeep: #8FDDB4;
+  --deco-leaf-chart: #C8F031;
+  --deco-leaf-chartdeep: #A5CC0B;
+  --deco-leaf-moss: #1F6B43;
+  --deco-leaf-line: #CFE3C9;
 
-  /* focus rings (3:1 against the surface they sit on) */
-  --ring-page-fg: #0b5cad;          --ring-page-bg: #fbf7ef;
-  --ring-card-fg: #0b5cad;          --ring-card-bg: #ffffff;
-  --ring-ink-fg: #ffd08a;           --ring-ink-bg: #12263a;
+  /* very faint fabric weave for the page background (alpha stays under 0.08) */
+  --grad-leafweave: repeating-linear-gradient(0deg, rgba(31, 107, 67, 0.045) 0 1px, transparent 1px 6px),
+                    repeating-linear-gradient(90deg, rgba(31, 107, 67, 0.045) 0 1px, transparent 1px 6px);
 
-  /* decoration only: lines, stripes, edges, SVG fills. Never text. */
-  --deco-hazard-a: #f28c28;
-  --deco-thread: #f28c28;
-  --deco-paper: #fbf7ef;
-  --deco-steel: #1f4e79;
-  --deco-ok: #5fd08a;
-  --deco-line: #d9d1bf;
-  --deco-slot: #cfc6b2;
-  --deco-edge-primary: #12304d;
-  --deco-edge-secondary: #b9b09b;
-  --deco-edge-accent: #b5640f;
-  --deco-edge-danger: #5e0b0b;
-
-  /* gradients (grain and wash are almost transparent) */
-  --grad-grain: repeating-linear-gradient(0deg, rgba(27, 47, 69, 0.018) 0 1px, transparent 1px 3px);
-  --grad-paper: radial-gradient(circle at 15% 0%, rgba(242, 140, 40, 0.07), transparent 38%),
-                radial-gradient(circle at 95% 5%, rgba(31, 78, 121, 0.06), transparent 34%);
-  --grad-ink: linear-gradient(160deg, #1d3b57 0%, #12263a 70%);
-  --grad-hazard: repeating-linear-gradient(-45deg, #f28c28 0 10px, #12263a 10px 20px);
-  --grad-weave: repeating-linear-gradient(45deg, rgba(251, 247, 239, 0.07) 0 2px, transparent 2px 9px),
-                repeating-linear-gradient(-45deg, rgba(251, 247, 239, 0.07) 0 2px, transparent 2px 9px);
-
-  /* shadows */
-  --shadow-card: 0 1px 0 rgba(18, 38, 58, 0.05), 0 2px 6px rgba(18, 38, 58, 0.06), 0 14px 28px -12px rgba(18, 38, 58, 0.22);
-  --shadow-lift: 0 2px 0 rgba(18, 38, 58, 0.05), 0 8px 16px rgba(18, 38, 58, 0.1), 0 28px 40px -16px rgba(18, 38, 58, 0.32);
-  --shadow-key: 0 10px 14px -8px rgba(18, 38, 58, 0.5);
-  --shadow-inset: inset 0 2px 4px rgba(18, 38, 58, 0.18);
-  --glow-focus: 0 0 0 4px rgba(11, 92, 173, 0.22);
+  --shadow-leaf-card: 0 1px 0 rgba(14, 36, 24, 0.05), 0 10px 24px -12px rgba(14, 36, 24, 0.25);
+  --shadow-leaf-lift: 0 2px 0 rgba(14, 36, 24, 0.06), 0 18px 32px -14px rgba(14, 36, 24, 0.35);
+  --shadow-leaf-key: 0 3px 0 #0E2418;
+  --glow-leaf: 0 0 0 6px rgba(200, 240, 49, 0.55);
 }

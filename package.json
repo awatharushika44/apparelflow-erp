@@ -9,7 +9,8 @@
     "lint": "eslint",
     "db:migrate": "node --env-file=.env.local db/migrate.mjs",
     "db:seed": "node --env-file=.env.local db/seed.mjs",
-    "test": "vitest run"
+    "test": "vitest run",
+    "test:e2e": "playwright test --config=e2e/playwright.config.js"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
@@ -21,7 +22,9 @@
     "zod": "^4.6.5"
   },
   "devDependencies": {
+    "@axe-core/playwright": "^4.13.0",
     "@electric-sql/pglite": "^0.5.8",
+    "@playwright/test": "^1.63.0",
     "eslint": "^9",
     "eslint-config-next": "16.3.8",
     "vitest": "^5.0.3"
