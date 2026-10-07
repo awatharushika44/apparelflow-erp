@@ -10,7 +10,8 @@
     "db:migrate": "node --env-file=.env.local db/migrate.mjs",
     "db:seed": "node --env-file=.env.local db/seed.mjs",
     "test": "vitest run",
-    "test:e2e": "playwright test --config=e2e/playwright.config.js"
+    "test:e2e": "playwright test --config=e2e/playwright.config.js",
+    "audit:db": "node --env-file=.env.local scripts/db-audit.mjs"
   },
   "dependencies": {
     "bcryptjs": "^3.0.3",
