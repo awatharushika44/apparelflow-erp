@@ -57,6 +57,7 @@ export default function SewingScreen() {
   }, []);
 
   useEffect(() => {
+// eslint-disable-next-line react-hooks/set-state-in-effect -- fetch on mount: state is set only after the request starts
     loadLists();
   }, [loadLists]);
 

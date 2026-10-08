@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import Link from 'next/link';
 import Scenes from './Scenes';
 import RoleTiles from './RoleTiles';
 import AuthDialog from './AuthDialog';
@@ -73,13 +74,13 @@ export default function Landing({
 
       <div className="ld-shell">
         <header className="ld-header">
-          <a href="/" className="ld-brand" aria-label="ApparelFlow home">
+          <Link href="/" className="ld-brand" aria-label="ApparelFlow home">
             <MarkIcon />
 
             <span className="ld-brand-name">
               ApparelFlow
             </span>
-          </a>
+          </Link>
 
           <span className="ld-header-tag">
             CUTTING GATE

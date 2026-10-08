@@ -22,6 +22,7 @@ export default function AuthDialog({
   useEffect(() => {
     if (!open) return;
 
+// eslint-disable-next-line react-hooks/set-state-in-effect -- fetch on mount: state is set only after the request starts
     setActiveMode(mode);
     setEmail(account?.email ?? '');
     setPassword(account?.password ?? '');
