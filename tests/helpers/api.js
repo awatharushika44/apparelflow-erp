@@ -1,7 +1,7 @@
 import bcrypt from 'bcryptjs';
 import { createTestDb } from './db.js';
 import { seedBasics } from './fixtures.js';
-import { useTestAdapter } from '../../lib/db.js';
+import { setTestAdapter } from '../../lib/db.js';
 import { POST as login } from '../../app/api/auth/login/route.js';
 
 process.env.JWT_SECRET = 'test-secret-' + 'x'.repeat(40);
@@ -24,7 +24,7 @@ export async function setupApi() {
     [bcrypt.hashSync(PASSWORD, 4)],
   );
 
-  useTestAdapter({
+  setTestAdapter({
     query: (text, params) => db.query(text, params),
     withTx: (fn) => db.transaction(fn),
   });
@@ -33,7 +33,7 @@ export async function setupApi() {
 }
 
 export async function teardownApi(db) {
-  useTestAdapter(null);
+  setTestAdapter(null);
   await db.close();
 }
 

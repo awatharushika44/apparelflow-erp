@@ -2,7 +2,7 @@ import bcrypt from 'bcryptjs';
 import jwt from 'jsonwebtoken';
 import { describe, it, expect, beforeAll, afterAll } from 'vitest';
 import { createTestDb } from './helpers/db.js';
-import { useTestAdapter } from '../lib/db.js';
+import { setTestAdapter } from '../lib/db.js';
 import { POST as login } from '../app/api/auth/login/route.js';
 import { GET as me } from '../app/api/auth/me/route.js';
 
@@ -34,7 +34,7 @@ let db;
 beforeAll(async () => {
   db = await createTestDb();
 
-  useTestAdapter({
+  setTestAdapter({
     query: (text, params) => db.query(text, params),
     withTx: (fn) => db.transaction(fn),
   });
@@ -51,7 +51,7 @@ beforeAll(async () => {
 }, 30000);
 
 afterAll(async () => {
-  useTestAdapter(null);
+  setTestAdapter(null);
   await db.close();
 });
 
